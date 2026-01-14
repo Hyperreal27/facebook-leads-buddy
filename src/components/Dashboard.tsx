@@ -90,15 +90,17 @@ export function Dashboard({ onLogout }: DashboardProps) {
         throw new Error("No se encontraron anuncios");
       }
 
-      // Extraer URLs únicas de páginas
-      const pageUrls = [...new Set(
+      // Extraer URLs únicas de páginas (evitar duplicados que Apify rechaza)
+      const uniquePageUris = [...new Set(
         adsResults
           .filter((item: { snapshot?: { page_profile_uri?: string } }) => item.snapshot?.page_profile_uri)
-          .map((item: { snapshot: { page_profile_uri: string } }) => ({
-            url: item.snapshot.page_profile_uri,
-            method: "GET"
-          }))
+          .map((item: { snapshot: { page_profile_uri: string } }) => item.snapshot.page_profile_uri)
       )];
+      
+      const pageUrls = uniquePageUris.map(uri => ({
+        url: uri,
+        method: "GET"
+      }));
 
       // Paso 4: Ejecutar scraper de páginas
       setStep("running_pages_scraper");
