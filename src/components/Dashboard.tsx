@@ -22,7 +22,8 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  const pollForStatus = async (actorPath: string, apiKey: string, maxAttempts = 60): Promise<boolean> => {
+  const pollForStatus = async (actorPath: string, apiKey: string, maxAttempts = 120): Promise<boolean> => {
+    // Polling adaptativo: empieza rápido (1s), luego aumenta gradualmente
     for (let i = 0; i < maxAttempts; i++) {
       const response = await fetch(
         `https://api.apify.com/v2/acts/${actorPath}/runs/last?token=${apiKey}`
@@ -36,7 +37,9 @@ export function Dashboard({ onLogout }: DashboardProps) {
         throw new Error(`Actor terminó con estado: ${data.data.status}`);
       }
       
-      await sleep(5000); // Esperar 5 segundos entre checks
+      // Polling adaptativo: 1s los primeros 10, luego 2s hasta 30, después 3s
+      const delay = i < 10 ? 1000 : i < 30 ? 2000 : 3000;
+      await sleep(delay);
     }
     throw new Error("Timeout esperando resultados");
   };
