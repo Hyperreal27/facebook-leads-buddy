@@ -4,7 +4,8 @@ import { ScraperForm } from "./ScraperForm";
 import { ResultsTable, ScrapedResult } from "./ResultsTable";
 import { ScrapingProgress, ScrapingStep } from "./ScrapingProgress";
 import { clearApifyApiKey, getApifyApiKey } from "@/lib/apify";
-import { LogOut, Zap } from "lucide-react";
+import { LogOut } from "lucide-react";
+import dragonBackground from "@/assets/dragon-background.jpg";
 
 interface DashboardProps {
   onLogout: () => void;
@@ -148,33 +149,38 @@ export function Dashboard({ onLogout }: DashboardProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Zap className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">Facebook Ads Scraper</h1>
+    <div 
+      className="min-h-screen bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: `url(${dragonBackground})` }}
+    >
+      <div className="min-h-screen bg-background/85 backdrop-blur-sm">
+        <header className="border-b bg-card/90 backdrop-blur-md">
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🐉</span>
+              <h1 className="text-xl font-bold">Dragons Scraping</h1>
+            </div>
+            <Button variant="ghost" size="sm" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Cerrar sesión
+            </Button>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleLogout}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Cerrar sesión
-          </Button>
-        </div>
-      </header>
+        </header>
 
-      <main className="container mx-auto px-4 py-8 space-y-6">
-        <div className="grid gap-6 md:grid-cols-2">
-          <ScraperForm 
-            onSubmit={handleScrape} 
-            isLoading={step !== "idle" && step !== "completed" && step !== "error"} 
-          />
-          <ScrapingProgress step={step} error={error} />
-        </div>
+        <main className="container mx-auto px-4 py-8 space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <ScraperForm 
+              onSubmit={handleScrape} 
+              isLoading={step !== "idle" && step !== "completed" && step !== "error"} 
+            />
+            <ScrapingProgress step={step} error={error} />
+          </div>
 
-        {(results.length > 0 || step === "completed") && (
-          <ResultsTable results={results} />
-        )}
-      </main>
+          {(results.length > 0 || step === "completed") && (
+            <ResultsTable results={results} />
+          )}
+        </main>
+      </div>
     </div>
   );
 }
